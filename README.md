@@ -31,6 +31,14 @@ python assistant.py
 
 ---
 
+### Run tests
+
+The regression tests use Python's standard `unittest` framework and require no extra test dependency:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## 🧠 Supported Questions
 
 | Query Topic | Response Type |
