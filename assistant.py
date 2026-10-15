@@ -29,8 +29,12 @@ def main():
     print("Type 'exit' to quit.\n")
 
     while True:
-        query = input("> ")
-        if query.lower() in ["exit", "quit"]:
+        try:
+            query = input("> ")
+        except (EOFError, KeyboardInterrupt):
+            print("\nAssistant: Goodbye!")
+            break
+        if query.strip().casefold() in ["exit", "quit"]:
             print("Assistant: Goodbye!")
             break
         print("Assistant:", respond(query))
