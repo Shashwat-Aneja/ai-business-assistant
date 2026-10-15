@@ -18,7 +18,7 @@ def respond(query):
 
     # Match the most specific topic first and avoid partial-word matches.
     for key in sorted(responses, key=len, reverse=True):
-        if re.search(rf"\\b{re.escape(key)}\\b", query):
+        if re.search(rf"\b{re.escape(key)}\b", query):
             return responses[key]
 
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, or automation."
