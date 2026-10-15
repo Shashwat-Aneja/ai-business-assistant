@@ -1,5 +1,8 @@
+import re
+
+
 def respond(query):
-    query = query.lower()
+    query = " ".join(query.casefold().split())
 
     responses = {
         "profit": "Profit = Revenue - Expenses",
@@ -13,8 +16,9 @@ def respond(query):
         "automation": "Automation improves efficiency by reducing manual work using software and AI systems.",
     }
 
-    for key in responses:
-        if key in query:
+    # Match the most specific topic first and avoid partial-word matches.
+    for key in sorted(responses, key=len, reverse=True):
+        if re.search(rf"\\b{re.escape(key)}\\b", query):
             return responses[key]
 
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, or automation."
