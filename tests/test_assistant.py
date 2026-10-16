@@ -37,6 +37,12 @@ class RespondTests(unittest.TestCase):
     def test_topic_matching_does_not_match_inside_larger_words(self):
         self.assertIn("not trained", respond("Explain profitability trends"))
 
+    def test_break_even_point_returns_unit_contribution_formula(self):
+        self.assertEqual(
+            respond("How do I calculate the break-even point?"),
+            "Break-even point = Fixed Costs / (Selling Price per Unit - Variable Cost per Unit).",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
