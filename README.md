@@ -41,13 +41,17 @@ python -m unittest discover -s tests -v
 
 ## 🧠 Supported Questions
 
-| Query Topic | Response Type |
-|-------------|---------------|
-| Profit / Revenue | Formula-based |
-| Expenses | Financial advice |
-| KPI | Explanation |
-| ROI | Calculation formula |
-| Business Growth | Strategic suggestions |
+| Supported query | Response |
+|-----------------|----------|
+| `profit` | Profit formula |
+| `revenue` | Revenue formula |
+| `profit margin` | Profit-margin formula |
+| `roi` | Return-on-investment formula |
+| `kpi` | KPI definition and examples |
+| `increase revenue` | Revenue-growth suggestions |
+| `reduce expenses` | Cost-reduction suggestions |
+| `business growth` | Growth-strategy suggestions |
+| `automation` | Automation overview |
 
 ---
 
@@ -57,7 +61,9 @@ python -m unittest discover -s tests -v
 ai-business-assistant/
 │
 ├── assistant.py
-└── README.md
+├── README.md
+└── tests/
+    └── test_assistant.py
 ```
 
 ---
