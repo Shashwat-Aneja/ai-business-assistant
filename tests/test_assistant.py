@@ -28,5 +28,15 @@ class RespondTests(unittest.TestCase):
         self.assertIn("Goodbye", output.getvalue())
 
 
+    def test_normalizes_repeated_whitespace(self):
+        self.assertEqual(
+            respond("  what   is   profit margin?  "),
+            "Profit Margin = (Profit / Revenue) × 100",
+        )
+
+    def test_topic_matching_does_not_match_inside_larger_words(self):
+        self.assertIn("not trained", respond("Explain profitability trends"))
+
+
 if __name__ == "__main__":
     unittest.main()
