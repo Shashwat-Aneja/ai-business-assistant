@@ -14,6 +14,7 @@ def respond(query):
         "reduce expenses": "Negotiate vendor costs, optimize resources, use automation tools.",
         "business growth": "Focus on customer retention, efficiency, product innovation, and analytics.",
         "automation": "Automation improves efficiency by reducing manual work using software and AI systems.",
+        "break-even point": "Break-even point = Fixed Costs / (Selling Price per Unit - Variable Cost per Unit).",
     }
 
     # Match the most specific topic first and avoid partial-word matches.
@@ -21,7 +22,7 @@ def respond(query):
         if re.search(rf"\b{re.escape(key)}\b", query):
             return responses[key]
 
-    return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, or automation."
+    return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, or automation."
 
 
 def main():
