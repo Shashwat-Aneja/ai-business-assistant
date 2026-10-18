@@ -37,6 +37,18 @@ class RespondTests(unittest.TestCase):
     def test_topic_matching_does_not_match_inside_larger_words(self):
         self.assertIn("not trained", respond("Explain profitability trends"))
 
+    def test_cash_flow_query_returns_inflow_outflow_definition(self):
+        self.assertEqual(
+            respond("How should I track cash flow?"),
+            "Net Cash Flow = Cash Inflows - Cash Outflows. Track timing as well as totals to anticipate shortfalls.",
+        )
+
+    def test_gross_margin_query_returns_percentage_formula(self):
+        self.assertEqual(
+            respond("Explain gross margin"),
+            "Gross Margin = ((Revenue - Cost of Goods Sold) / Revenue) × 100. Revenue must be non-zero.",
+        )
+
     def test_break_even_point_returns_unit_contribution_formula(self):
         self.assertEqual(
             respond("How do I calculate the break-even point?"),
