@@ -15,6 +15,8 @@ def respond(query):
         "business growth": "Focus on customer retention, efficiency, product innovation, and analytics.",
         "automation": "Automation improves efficiency by reducing manual work using software and AI systems.",
         "break-even point": "Break-even point = Fixed Costs / (Selling Price per Unit - Variable Cost per Unit).",
+        "cash flow": "Net Cash Flow = Cash Inflows - Cash Outflows. Track timing as well as totals to anticipate shortfalls.",
+        "gross margin": "Gross Margin = ((Revenue - Cost of Goods Sold) / Revenue) × 100. Revenue must be non-zero.",
     }
 
     # Match the most specific topic first and avoid partial-word matches.
