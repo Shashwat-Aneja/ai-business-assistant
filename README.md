@@ -77,3 +77,13 @@ ai-business-assistant/
 ---
 
 Developed by **Shashwat Aneja**
+
+
+### Additional finance topics
+
+The assistant also answers common operating-finance questions:
+
+- **Cash flow:** net cash flow is cash inflows minus cash outflows. Consider timing, not only the total.
+- **Gross margin:** `((Revenue - Cost of Goods Sold) / Revenue) × 100`. Revenue must be non-zero when calculating the ratio.
+
+Try asking `How should I track cash flow?` or `Explain gross margin` in the CLI.
