@@ -43,6 +43,12 @@ class RespondTests(unittest.TestCase):
             "Net Cash Flow = Cash Inflows - Cash Outflows. Track timing as well as totals to anticipate shortfalls.",
         )
 
+    def test_current_ratio_query_returns_liquidity_formula(self):
+        self.assertIn(
+            "Current Ratio = Current Assets / Current Liabilities",
+            respond("How do I calculate the current ratio?"),
+        )
+
     def test_gross_margin_query_returns_percentage_formula(self):
         self.assertEqual(
             respond("Explain gross margin"),
