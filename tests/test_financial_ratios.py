@@ -11,7 +11,7 @@ class FinancialRatioGuidanceTests(unittest.TestCase):
 
     def test_debt_to_equity_ratio_returns_financing_formula(self):
         answer = respond("Explain the debt-to-equity ratio")
-        self.assertIn("Total Liabilities / Shareholders' Equity", answer)
+        self.assertIn("Total Debt / Shareholders' Equity", answer)
 
     def test_operating_margin_returns_profitability_formula(self):
         answer = respond("What is operating margin?")
