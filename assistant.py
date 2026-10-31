@@ -19,6 +19,9 @@ def respond(query):
         "gross margin": "Gross Margin = ((Revenue - Cost of Goods Sold) / Revenue) × 100. Revenue must be non-zero.",
         "working capital": "Working Capital = Current Assets - Current Liabilities. Positive working capital generally supports short-term obligations; compare it with operating cash needs.",
         "current ratio": "Current Ratio = Current Assets / Current Liabilities. A ratio above 1 generally means current assets exceed current liabilities; interpret it alongside cash-flow timing and industry norms.",
+        "quick ratio": "Quick Ratio = (Cash + Marketable Securities + Accounts Receivable) / Current Liabilities. It excludes inventory and other less-liquid current assets.",
+        "debt-to-equity ratio": "Debt-to-Equity Ratio = Total Liabilities / Shareholders' Equity. Interpret the result against the company's industry and financing model.",
+        "operating margin": "Operating Margin = (Operating Income / Revenue) × 100. Revenue must be non-zero.",
     }
 
     # Match the most specific topic first and avoid partial-word matches.
@@ -26,7 +29,7 @@ def respond(query):
         if re.search(rf"\b{re.escape(key)}\b", query):
             return responses[key]
 
-    return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, or automation."
+    return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, cash flow, liquidity ratios, or operating margin."
 
 
 def main():
