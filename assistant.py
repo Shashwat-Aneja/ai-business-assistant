@@ -20,7 +20,7 @@ def respond(query):
         "working capital": "Working Capital = Current Assets - Current Liabilities. Positive working capital generally supports short-term obligations; compare it with operating cash needs.",
         "current ratio": "Current Ratio = Current Assets / Current Liabilities. A ratio above 1 generally means current assets exceed current liabilities; interpret it alongside cash-flow timing and industry norms.",
         "quick ratio": "Quick Ratio = (Cash + Marketable Securities + Accounts Receivable) / Current Liabilities. It excludes inventory and other less-liquid current assets.",
-        "debt-to-equity ratio": "Debt-to-Equity Ratio = Total Liabilities / Shareholders' Equity. Interpret the result against the company's industry and financing model.",
+        "debt-to-equity ratio": "Debt-to-Equity Ratio = Total Debt / Shareholders' Equity. Interpret the result against the company's industry and financing model.",
         "operating margin": "Operating Margin = (Operating Income / Revenue) × 100. Revenue must be non-zero.",
     }
 
