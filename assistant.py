@@ -2,6 +2,8 @@ import re
 
 
 def respond(query):
+    if not isinstance(query, str):
+        return "Please enter a text question."
     query = " ".join(query.casefold().split())
 
     responses = {
@@ -14,7 +16,7 @@ def respond(query):
         "reduce expenses": "Negotiate vendor costs, optimize resources, use automation tools.",
         "business growth": "Focus on customer retention, efficiency, product innovation, and analytics.",
         "automation": "Automation improves efficiency by reducing manual work using software and AI systems.",
-        "break-even point": "Break-even point = Fixed Costs / (Selling Price per Unit - Variable Cost per Unit).",
+        "break-even point": "Break-even point = Fixed Costs / (Selling Price per Unit - Variable Cost per Unit). Selling price must exceed variable cost; otherwise no finite break-even volume exists.",
         "cash flow": "Net Cash Flow = Cash Inflows - Cash Outflows. Track timing as well as totals to anticipate shortfalls.",
         "gross margin": "Gross Margin = ((Revenue - Cost of Goods Sold) / Revenue) × 100. Revenue must be non-zero.",
         "working capital": "Working Capital = Current Assets - Current Liabilities. Positive working capital generally supports short-term obligations; compare it with operating cash needs.",
