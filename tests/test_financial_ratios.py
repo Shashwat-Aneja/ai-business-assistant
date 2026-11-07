@@ -26,3 +26,14 @@ class FinancialRatioGuidanceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_break_even_guidance_explains_non_positive_contribution_margin(self):
+        answer = respond("How do I calculate the break-even point?")
+        self.assertIn("Selling price must exceed variable cost", answer)
+        self.assertIn("no finite break-even volume", answer)
+
+    def test_non_text_queries_return_an_actionable_message(self):
+        for query in (None, 42, ["profit"]):
+            with self.subTest(query=query):
+                self.assertEqual(respond(query), "Please enter a text question.")
