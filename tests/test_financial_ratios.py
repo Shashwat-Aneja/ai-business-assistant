@@ -24,10 +24,6 @@ class FinancialRatioGuidanceTests(unittest.TestCase):
         self.assertIn("not trained", respond("How can we quickly expand sales?"))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_break_even_guidance_explains_non_positive_contribution_margin(self):
         answer = respond("How do I calculate the break-even point?")
         self.assertIn("Selling price must exceed variable cost", answer)
@@ -37,3 +33,8 @@ if __name__ == "__main__":
         for query in (None, 42, ["profit"]):
             with self.subTest(query=query):
                 self.assertEqual(respond(query), "Please enter a text question.")
+
+
+if __name__ == "__main__":
+    unittest.main()
+
