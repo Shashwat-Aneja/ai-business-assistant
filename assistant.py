@@ -2,7 +2,7 @@ import re
 
 
 def respond(query):
-    query = " ".join(query.casefold().split())
+    query = " ".join(re.sub(r"[-\u2013\u2014]", " ", query.casefold()).split())
 
     responses = {
         "profit": "Profit = Revenue - Expenses",
@@ -26,7 +26,8 @@ def respond(query):
 
     # Match the most specific topic first and avoid partial-word matches.
     for key in sorted(responses, key=len, reverse=True):
-        if re.search(rf"\b{re.escape(key)}\b", query):
+        normalized_key = key.replace("-", " ")
+        if re.search(rf"\b{re.escape(normalized_key)}\b", query):
             return responses[key]
 
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, cash flow, liquidity ratios, or operating margin."
