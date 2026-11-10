@@ -24,5 +24,27 @@ class FinancialRatioGuidanceTests(unittest.TestCase):
         self.assertIn("not trained", respond("How can we quickly expand sales?"))
 
 
+    def test_debt_to_equity_accepts_spaced_and_dash_variants(self):
+        for query in (
+            "Explain debt to equity ratio",
+            "Explain debt-to-equity ratio",
+            "Explain debt–to–equity ratio",
+        ):
+            with self.subTest(query=query):
+                self.assertIn("Total Debt / Shareholders' Equity", respond(query))
+
+    def test_break_even_topic_accepts_unhyphenated_phrase(self):
+        self.assertIn(
+            "Fixed Costs /",
+            respond("How do I find the break even point?"),
+        )
+
+    def test_profit_margin_accepts_hyphenated_query(self):
+        self.assertIn(
+            "Profit Margin =",
+            respond("Explain profit-margin."),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
