@@ -92,3 +92,6 @@ Try asking `How should I track cash flow?` or `Explain gross margin` in the CLI.
 ### Working capital
 
 Ask about **working capital** to get the basic formula: current assets minus current liabilities. The guidance also reminds users to consider short-term obligations and operating cash needs when interpreting the result.
+
+
+Pass a quoted query to answer once without prompting: `python assistant.py "cash flow" --json`. Without a query, the interactive loop remains available.

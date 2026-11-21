@@ -1,4 +1,6 @@
 import re
+import argparse
+import json
 import unicodedata
 
 
@@ -40,7 +42,17 @@ def respond(query):
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, cash flow, liquidity ratios, or operating margin."
 
 
-def main():
+def main(argv=()):
+    parser = argparse.ArgumentParser(description="Look up rule-based business guidance")
+    parser.add_argument("query", nargs="?", help="Answer one query without entering the interactive loop")
+    parser.add_argument("--json", action="store_true", help="Emit a machine-readable single-query answer")
+    args = parser.parse_args(argv)
+    if args.query is not None:
+        answer = respond(args.query)
+        print(json.dumps({"query": args.query, "answer": answer}, ensure_ascii=False) if args.json else answer)
+        return 0
+    if args.json:
+        parser.error("--json requires a query")
     print("\n=== AI Business Assistant ===")
     print("Type 'exit' to quit.\n")
 
@@ -57,5 +69,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(sys.argv[1:])
 
