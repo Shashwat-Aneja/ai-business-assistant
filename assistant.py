@@ -1,8 +1,15 @@
 import re
+import unicodedata
+
+
+def normalize_topic(text):
+    if not isinstance(text, str):
+        raise ValueError("Business queries must be text.")
+    return " ".join(re.sub(r"[\W_]+", " ", unicodedata.normalize("NFKC", text).casefold()).split())
 
 
 def respond(query):
-    query = " ".join(re.sub(r"[-\u2013\u2014]", " ", query.casefold()).split())
+    query = normalize_topic(query)
 
     responses = {
         "profit": "Profit = Revenue - Expenses",
@@ -26,7 +33,7 @@ def respond(query):
 
     # Match the most specific topic first and avoid partial-word matches.
     for key in sorted(responses, key=len, reverse=True):
-        normalized_key = key.replace("-", " ")
+        normalized_key = normalize_topic(key)
         if re.search(rf"\b{re.escape(normalized_key)}\b", query):
             return responses[key]
 
@@ -51,3 +58,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
