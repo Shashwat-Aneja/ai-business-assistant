@@ -95,3 +95,5 @@ Ask about **working capital** to get the basic formula: current assets minus cur
 
 
 Pass a quoted query to answer once without prompting: `python assistant.py "cash flow" --json`. Without a query, the interactive loop remains available.
+
+`--topics` lists the supported rule-based topics, and `--topics --json` exposes the same sorted inventory for integrations. No financial guidance has been added by these CLI modes.
