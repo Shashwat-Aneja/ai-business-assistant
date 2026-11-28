@@ -101,3 +101,5 @@ Pass a quoted query to answer once without prompting: `python assistant.py "cash
 Use `--queries-file queries.txt` for ordered JSONL answers from UTF-8 (optional BOM) nonblank lines. The complete file is validated before answers: max 1 MiB, 1–1000 queries, max 16384 characters per query. No external model/API is called.
 
 `--all-matches` answers distinct topics in query order for a one-shot query or batch file. Longer overlapping matches take precedence; repeated topics are deduplicated. JSON adds structured `matches`; default single-topic behavior is unchanged.
+
+`--suggestions` adds up to three similar supported topics only for unmatched one-shot or batch queries. It keeps the fallback answer and never treats a fuzzy suggestion as an exact match.

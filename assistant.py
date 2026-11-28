@@ -2,6 +2,7 @@ import re
 import argparse
 import json
 import unicodedata
+import difflib
 from pathlib import Path
 
 
@@ -64,13 +65,17 @@ def matching_topics(query):
     return list(dict.fromkeys(key for _, _, key in sorted(accepted)))
 
 
-def query_record(query, all_matches=False):
+def query_record(query, all_matches=False, suggestions=False):
     record = {"query": query, "answer": respond(query)}
-    topics = matching_topics(query) if all_matches else []
+    topics = matching_topics(query) if all_matches or suggestions else []
     if all_matches:
         record["matches"] = [{"topic": key, "answer": RESPONSES[key]} for key in topics]
         if record["matches"]:
             record["answer"] = "\n".join(item["answer"] for item in record["matches"])
+    if suggestions and not topics:
+        names = {normalize_topic(key): key for key in RESPONSES}
+        close = difflib.get_close_matches(normalize_topic(query), list(names), n=3, cutoff=0.65)
+        record["suggestions"] = [names[key] for key in close]
     return record
 
 
@@ -93,7 +98,10 @@ def main(argv=()):
     parser.add_argument("--topics", action="store_true", help="List supported topics without answering a query")
     parser.add_argument("--queries-file", help="Read bounded UTF-8 queries; emit one JSON object per nonblank line")
     parser.add_argument("--all-matches", action="store_true", help="Return distinct nonoverlapping business topics in query order")
+    parser.add_argument("--suggestions", action="store_true", help="Suggest up to three topics for unmatched queries")
     args = parser.parse_args(argv)
+    if args.suggestions and (args.topics or (args.query is None and args.queries_file is None)):
+        parser.error("--suggestions requires a query or query file")
     if args.all_matches and (args.topics or (args.query is None and args.queries_file is None)):
         parser.error("--all-matches requires a query or query file")
     if args.queries_file is not None:
@@ -104,7 +112,7 @@ def main(argv=()):
         except (OSError, UnicodeError, ValueError) as exc:
             parser.error(str(exc))
         for query in queries:
-            print(json.dumps(query_record(query, args.all_matches), ensure_ascii=False))
+            print(json.dumps(query_record(query, args.all_matches, args.suggestions), ensure_ascii=False))
         return 0
     if args.topics:
         if args.query is not None:
@@ -112,8 +120,8 @@ def main(argv=()):
         print(json.dumps(available_topics()) if args.json else "\n".join(available_topics()))
         return 0
     if args.query is not None:
-        record = query_record(args.query, args.all_matches)
-        print(json.dumps(record, ensure_ascii=False) if args.json else record["answer"])
+        record = query_record(args.query, args.all_matches, args.suggestions)
+        print(json.dumps(record, ensure_ascii=False) if args.json else record["answer"] + ("\nSuggested topics: " + ", ".join(record["suggestions"]) if record.get("suggestions") else ""))
         return 0
     if args.json:
         parser.error("--json requires a query")
