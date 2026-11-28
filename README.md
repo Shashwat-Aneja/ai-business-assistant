@@ -97,3 +97,5 @@ Ask about **working capital** to get the basic formula: current assets minus cur
 Pass a quoted query to answer once without prompting: `python assistant.py "cash flow" --json`. Without a query, the interactive loop remains available.
 
 `--topics` lists the supported rule-based topics, and `--topics --json` exposes the same sorted inventory for integrations. No financial guidance has been added by these CLI modes.
+
+Use `--queries-file queries.txt` for ordered JSONL answers from UTF-8 (optional BOM) nonblank lines. The complete file is validated before answers: max 1 MiB, 1–1000 queries, max 16384 characters per query. No external model/API is called.
