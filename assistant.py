@@ -49,6 +49,31 @@ def respond(query):
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, cash flow, liquidity ratios, or operating margin."
 
 
+def matching_topics(query):
+    normalized = normalize_topic(query)
+    candidates = []
+    for key in RESPONSES:
+        for match in re.finditer(rf"\b{re.escape(normalize_topic(key))}\b", normalized):
+            candidates.append((match.start(), match.end(), key))
+    accepted = []
+    occupied = bytearray(len(normalized))
+    for start, end, key in sorted(candidates, key=lambda item: (-(item[1] - item[0]), item[0], item[2])):
+        if not any(occupied[start:end]):
+            occupied[start:end] = b"\x01" * (end - start)
+            accepted.append((start, end, key))
+    return list(dict.fromkeys(key for _, _, key in sorted(accepted)))
+
+
+def query_record(query, all_matches=False):
+    record = {"query": query, "answer": respond(query)}
+    topics = matching_topics(query) if all_matches else []
+    if all_matches:
+        record["matches"] = [{"topic": key, "answer": RESPONSES[key]} for key in topics]
+        if record["matches"]:
+            record["answer"] = "\n".join(item["answer"] for item in record["matches"])
+    return record
+
+
 def read_queries(path):
     # Read a bounded amount even if the file grows after opening.
     with Path(path).open("rb") as handle:
@@ -67,7 +92,10 @@ def main(argv=()):
     parser.add_argument("--json", action="store_true", help="Emit a machine-readable single-query answer")
     parser.add_argument("--topics", action="store_true", help="List supported topics without answering a query")
     parser.add_argument("--queries-file", help="Read bounded UTF-8 queries; emit one JSON object per nonblank line")
+    parser.add_argument("--all-matches", action="store_true", help="Return distinct nonoverlapping business topics in query order")
     args = parser.parse_args(argv)
+    if args.all_matches and (args.topics or (args.query is None and args.queries_file is None)):
+        parser.error("--all-matches requires a query or query file")
     if args.queries_file is not None:
         if args.query is not None or args.topics:
             parser.error("--queries-file cannot be combined with a query or --topics")
@@ -76,7 +104,7 @@ def main(argv=()):
         except (OSError, UnicodeError, ValueError) as exc:
             parser.error(str(exc))
         for query in queries:
-            print(json.dumps({"query": query, "answer": respond(query)}, ensure_ascii=False))
+            print(json.dumps(query_record(query, args.all_matches), ensure_ascii=False))
         return 0
     if args.topics:
         if args.query is not None:
@@ -84,8 +112,8 @@ def main(argv=()):
         print(json.dumps(available_topics()) if args.json else "\n".join(available_topics()))
         return 0
     if args.query is not None:
-        answer = respond(args.query)
-        print(json.dumps({"query": args.query, "answer": answer}, ensure_ascii=False) if args.json else answer)
+        record = query_record(args.query, args.all_matches)
+        print(json.dumps(record, ensure_ascii=False) if args.json else record["answer"])
         return 0
     if args.json:
         parser.error("--json requires a query")
