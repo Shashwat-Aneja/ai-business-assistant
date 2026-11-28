@@ -2,6 +2,8 @@ import re
 import argparse
 import json
 import unicodedata
+import difflib
+from pathlib import Path
 
 
 RESPONSES = {
@@ -48,20 +50,78 @@ def respond(query):
     return "I’m not trained for that yet. Try asking about profit, ROI, KPI, revenue, break-even point, cash flow, liquidity ratios, or operating margin."
 
 
+def matching_topics(query):
+    normalized = normalize_topic(query)
+    candidates = []
+    for key in RESPONSES:
+        for match in re.finditer(rf"\b{re.escape(normalize_topic(key))}\b", normalized):
+            candidates.append((match.start(), match.end(), key))
+    accepted = []
+    occupied = bytearray(len(normalized))
+    for start, end, key in sorted(candidates, key=lambda item: (-(item[1] - item[0]), item[0], item[2])):
+        if not any(occupied[start:end]):
+            occupied[start:end] = b"\x01" * (end - start)
+            accepted.append((start, end, key))
+    return list(dict.fromkeys(key for _, _, key in sorted(accepted)))
+
+
+def query_record(query, all_matches=False, suggestions=False):
+    record = {"query": query, "answer": respond(query)}
+    topics = matching_topics(query) if all_matches or suggestions else []
+    if all_matches:
+        record["matches"] = [{"topic": key, "answer": RESPONSES[key]} for key in topics]
+        if record["matches"]:
+            record["answer"] = "\n".join(item["answer"] for item in record["matches"])
+    if suggestions and not topics:
+        names = {normalize_topic(key): key for key in RESPONSES}
+        close = difflib.get_close_matches(normalize_topic(query), list(names), n=3, cutoff=0.65)
+        record["suggestions"] = [names[key] for key in close]
+    return record
+
+
+def read_queries(path):
+    # Read a bounded amount even if the file grows after opening.
+    with Path(path).open("rb") as handle:
+        raw = handle.read(1024 * 1024 + 1)
+    if len(raw) > 1024 * 1024:
+        raise ValueError("Query file exceeds the 1 MiB budget")
+    queries = [line.strip() for line in raw.decode("utf-8-sig").splitlines() if line.strip()]
+    if not queries or len(queries) > 1000 or any(len(q) > 16384 for q in queries):
+        raise ValueError("Provide 1–1000 nonblank queries of at most 16384 characters")
+    return queries
+
+
 def main(argv=()):
     parser = argparse.ArgumentParser(description="Look up rule-based business guidance")
     parser.add_argument("query", nargs="?", help="Answer one query without entering the interactive loop")
     parser.add_argument("--json", action="store_true", help="Emit a machine-readable single-query answer")
     parser.add_argument("--topics", action="store_true", help="List supported topics without answering a query")
+    parser.add_argument("--queries-file", help="Read bounded UTF-8 queries; emit one JSON object per nonblank line")
+    parser.add_argument("--all-matches", action="store_true", help="Return distinct nonoverlapping business topics in query order")
+    parser.add_argument("--suggestions", action="store_true", help="Suggest up to three topics for unmatched queries")
     args = parser.parse_args(argv)
+    if args.suggestions and (args.topics or (args.query is None and args.queries_file is None)):
+        parser.error("--suggestions requires a query or query file")
+    if args.all_matches and (args.topics or (args.query is None and args.queries_file is None)):
+        parser.error("--all-matches requires a query or query file")
+    if args.queries_file is not None:
+        if args.query is not None or args.topics:
+            parser.error("--queries-file cannot be combined with a query or --topics")
+        try:
+            queries = read_queries(args.queries_file)
+        except (OSError, UnicodeError, ValueError) as exc:
+            parser.error(str(exc))
+        for query in queries:
+            print(json.dumps(query_record(query, args.all_matches, args.suggestions), ensure_ascii=False))
+        return 0
     if args.topics:
         if args.query is not None:
             parser.error("--topics cannot be combined with a query")
         print(json.dumps(available_topics()) if args.json else "\n".join(available_topics()))
         return 0
     if args.query is not None:
-        answer = respond(args.query)
-        print(json.dumps({"query": args.query, "answer": answer}, ensure_ascii=False) if args.json else answer)
+        record = query_record(args.query, args.all_matches, args.suggestions)
+        print(json.dumps(record, ensure_ascii=False) if args.json else record["answer"] + ("\nSuggested topics: " + ", ".join(record["suggestions"]) if record.get("suggestions") else ""))
         return 0
     if args.json:
         parser.error("--json requires a query")
